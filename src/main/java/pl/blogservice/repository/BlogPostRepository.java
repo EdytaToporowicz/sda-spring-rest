@@ -37,8 +37,8 @@ public class BlogPostRepository implements DataRepository<BlogPost>, Initializin
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        final User janek = new User("janko_muzykant", "janek@gmail.com");
-        final User kasia = new User("kaska", "kasia@gmail.com");
+        final User janek = new User(1, "janko_muzykant", "janek@gmail.com");
+        final User kasia = new User(2, "kaska", "kasia@gmail.com");
         this.save(new BlogPost(1, janek, "Spring framework - wady i zalety", "Spring ma same zalety",
                 Topic.PROGRAMMING, LocalDateTime.now()));
         this.save(new BlogPost(2, kasia, "Czy Java umiera?", "Java ma sie dobrze jak nigdy", Topic.PROGRAMMING,
