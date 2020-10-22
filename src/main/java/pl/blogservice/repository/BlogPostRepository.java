@@ -1,9 +1,7 @@
 package pl.blogservice.repository;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-import pl.blogservice.decorator.StringDecorator;
 import pl.blogservice.model.BlogPost;
 import pl.blogservice.model.Topic;
 import pl.blogservice.model.User;
@@ -15,18 +13,10 @@ import java.util.List;
 @Repository
 public class BlogPostRepository implements DataRepository<BlogPost>, InitializingBean {
 
-    private final StringDecorator stringDecorator;
-
     private final List<BlogPost> blogPosts = new ArrayList<>();
-
-    public BlogPostRepository(final @Qualifier("spaceRemovingStringDecorator") StringDecorator stringDecorator) {
-        this.stringDecorator = stringDecorator;
-    }
 
     @Override
     public void save(final BlogPost blogPost) {
-        final String decoratedTitle = stringDecorator.decorate(blogPost.getTitle());
-        blogPost.setTitle(decoratedTitle);
         blogPosts.add(blogPost);
     }
 
