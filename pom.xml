@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>pl</groupId>
-    <artifactId>blog-service</artifactId>
+    <artifactId>live-coding-spring-rest</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>blog-service</name>
+    <name>live-coding-spring-rest</name>
     <description>Blog service web application</description>
 
     <properties>
