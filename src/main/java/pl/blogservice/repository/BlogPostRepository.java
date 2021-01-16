@@ -26,6 +26,11 @@ public class BlogPostRepository implements DataRepository<BlogPost>, Initializin
     }
 
     @Override
+    public void remove(BlogPost entity) {
+
+    }
+
+    @Override
     public void afterPropertiesSet() throws Exception {
         final User janek = new User(1, "janko_muzykant", "janek@gmail.com");
         final User kasia = new User(2, "kaska", "kasia@gmail.com");

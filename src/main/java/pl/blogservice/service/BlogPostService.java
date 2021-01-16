@@ -6,7 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.blogservice.TimestampProvider;
 import pl.blogservice.model.BlogPost;
+import pl.blogservice.model.Topic;
+import pl.blogservice.model.User;
+import pl.blogservice.model.request.BlogPostRequest;
 import pl.blogservice.repository.DataRepository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Component
 public class BlogPostService {
@@ -15,14 +23,16 @@ public class BlogPostService {
 
     private final DataRepository<BlogPost> dataRepository;
     private final TimestampProvider timestampProvider;
+    private final BlogPostMapper blogPostMapper;
 
     @Autowired
     public BlogPostService(
             final DataRepository<BlogPost> dataRepository,
-            final TimestampProvider timestampProvider
-    ) {
+            final TimestampProvider timestampProvider,
+            BlogPostMapper blogPostMapper) {
         this.dataRepository = dataRepository;
         this.timestampProvider = timestampProvider;
+        this.blogPostMapper = blogPostMapper;
     }
 
     public void save(final BlogPost blogPost) {
@@ -37,4 +47,32 @@ public class BlogPostService {
                 .orElse(null);
     }
 
+    public List<BlogPost> findAll() {
+        return dataRepository.findAll();
+    }
+
+    public List<BlogPost> findByTopic(final Topic topic) {
+        return dataRepository.findAll()
+                .stream()
+                .filter(blogPost -> blogPost.getTopic().equals(topic))
+                .collect(Collectors.toList());
+    }
+
+    public void deleteBlogPost(long blogPostId) {
+        dataRepository.findAll()
+                .stream()
+                .filter(blogPost -> blogPost.getId() == blogPostId)
+                .findFirst()
+                .ifPresent(blogPost -> dataRepository.remove(blogPost));
+    }
+
+    public BlogPost createBlogPost(BlogPostRequest blogPostRequest) {
+        BlogPost blogPost = blogPostMapper.map(blogPostRequest);
+        blogPost.setCreated(LocalDateTime.now());
+        blogPost.setId(new Random().nextLong());
+        User author = new User(blogPostRequest.getAuthorId(), null, null);
+        blogPost.setAuthor(author);
+        dataRepository.save(blogPost);
+        return blogPost;
+    }
 }
