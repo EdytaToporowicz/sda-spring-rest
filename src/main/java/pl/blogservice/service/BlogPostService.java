@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.blogservice.TimestampProvider;
+import pl.blogservice.exception.BlogPostNotFoundException;
 import pl.blogservice.model.BlogPost;
 import pl.blogservice.model.Topic;
 import pl.blogservice.model.User;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class BlogPostService {
-
     private static final Logger logger = LoggerFactory.getLogger(BlogPostService.class);
 
     private final DataRepository<BlogPost> dataRepository;
@@ -26,16 +26,14 @@ public class BlogPostService {
     private final BlogPostMapper blogPostMapper;
 
     @Autowired
-    public BlogPostService(
-            final DataRepository<BlogPost> dataRepository,
-            final TimestampProvider timestampProvider,
-            BlogPostMapper blogPostMapper) {
+    public BlogPostService(DataRepository<BlogPost> dataRepository, TimestampProvider timestampProvider, BlogPostMapper blogPostMapper) {
         this.dataRepository = dataRepository;
         this.timestampProvider = timestampProvider;
         this.blogPostMapper = blogPostMapper;
     }
 
-    public void save(final BlogPost blogPost) {
+
+    public void save(final BlogPost blogPost) {                         //sprawdzić
         blogPost.setModified(timestampProvider.getTimestamp());
         dataRepository.save(blogPost);
     }
@@ -44,7 +42,7 @@ public class BlogPostService {
         return dataRepository.findAll().stream()
                 .filter(post -> id == post.getId())
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new BlogPostNotFoundException("could not find post by id " + id));     //do obsługi wyjątku
     }
 
     public List<BlogPost> findAll() {
@@ -63,7 +61,10 @@ public class BlogPostService {
                 .stream()
                 .filter(blogPost -> blogPost.getId() == blogPostId)
                 .findFirst()
-                .ifPresent(blogPost -> dataRepository.remove(blogPost));
+                // .ifPresent(blogPost -> dataRepository.remove(blogPost));
+                .ifPresentOrElse(blogPost -> dataRepository.remove(blogPost), () -> {
+                    throw new BlogPostNotFoundException("BlogPost doesnt exist-coul not delete: " + blogPostId);
+                });
     }
 
     public BlogPost createBlogPost(BlogPostRequest blogPostRequest) {
@@ -75,4 +76,6 @@ public class BlogPostService {
         dataRepository.save(blogPost);
         return blogPost;
     }
+
+
 }

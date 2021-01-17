@@ -9,4 +9,5 @@ public interface DataRepository<T> {
     List<T> findAll();
 
     void remove(T entity);
+
 }
