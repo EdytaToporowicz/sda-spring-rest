@@ -15,7 +15,7 @@ import java.util.List;
 public class BlogPostRepository implements DataRepository<BlogPost>, InitializingBean {
 
     private final List<BlogPost> blogPosts = new ArrayList<>();
-    private List<Comment> comments = new ArrayList<>();
+
 
 
     @Override
