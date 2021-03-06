@@ -29,4 +29,5 @@ public class BlogPost {
         this.topic = topic;
         this.created = created;
     }
+
 }
